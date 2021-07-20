@@ -4,8 +4,8 @@
  * 
  * @package AutoBackup
  * @author 泽泽社长
- * @version 1.3.0
- * @link http://zezeshe.com
+ * @version 1.3.1
+ * @link https://zezeshe.com/archives/autobackup-typecho-plugins.html
  */
 class AutoBackup_Plugin implements Typecho_Plugin_Interface
 {
@@ -45,8 +45,8 @@ class AutoBackup_Plugin implements Typecho_Plugin_Interface
 	 */
 	public static function config(Typecho_Widget_Helper_Form $form)
 	{
-		$tables = new Typecho_Widget_Helper_Form_Element_Text('tables', null, null, _t('需要备份的表'), _t('键入表名，用“,”隔开，typecho默认表为 comments,contents,metas,options,relationships,users'));
-		$form->addInput($tables);
+      $tables = new Typecho_Widget_Helper_Form_Element_Checkbox('tables', self::listTables(), self::listTables(), _t('需要备份的数据表'), _t('选择你需要备份的数据表，插件首次启动时会默认全选'));
+        $form->addInput($tables);
 
 		$subject = new Typecho_Widget_Helper_Form_Element_Text('subject', null, null, _t('自定义邮件标题'), _t('格式：20100902-XXX-数据库备份文件（不填则XXX默认为博客标题）'));
 		$form->addInput($subject);
@@ -105,5 +105,19 @@ class AutoBackup_Plugin implements Typecho_Plugin_Interface
 		}
 	}
 
-    
+        /**
+     * 获取数据表
+     * @return array
+     * @throws Typecho_Db_Exception
+     */
+    public static function listTables()
+    {
+        $db = Typecho_Db::get();
+        $rows = $db->fetchAll($db->query("SHOW TABLES"));
+        $tables = [];
+        foreach ($rows as $row) {
+            $tables[array_values($row)[0]] = array_values($row)[0];
+        }
+        return $tables;
+    }
 }
