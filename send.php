@@ -100,20 +100,20 @@ if($type==0){
         
         
 		$db = Typecho_Db::get();
-		$prefix = $db->getPrefix();
+		
 		$sql = "-- Typecho AutoBackup\r\n-- version 1.2.0\r\n-- 生成日期: ".date("Y年m月d日 H:i:s")."\r\n-- 使用说明：创建一个数据库，然后导入文件\r\n\r\n";
 
 		foreach ($tables as $table) {		//循环获取数据库中数据
-			$sql .= "\r\nDROP TABLE IF EXISTS ".$prefix.$table.";\r\n";
-			$create_sql = $db->fetchRow($db->query("SHOW CREATE TABLE `".$prefix.$table."`"));
+			$sql .= "\r\nDROP TABLE IF EXISTS ".$table.";\r\n";
+			$create_sql = $db->fetchRow($db->query("SHOW CREATE TABLE `" . $table . "`"));
 			$sql .= $create_sql['Create Table'].";\r\n";
-			$result = $db->query($db->select()->from('table.'.$table));
+			$result = $db->query($db->select()->from($table));
 			while ($row = $db->fetchRow($result)) {
 				foreach ($row as $key=>$value) {	//每次取一行数据
 					$keys[] = "`".$key."`";		//字段存入数组
 					$values[] = "'".addslashes($value)."'";		//值存入数组
 				}
-				$sql .= "insert into `".$prefix.$table."` (".implode(",", $keys).") values (".implode(",", $values).");\r\n";	//生成插入语句
+				$sql .= "insert into `".$table."` (".implode(",", $keys).") values (".implode(",", $values).");\r\n";	//生成插入语句
 
 				//清空字段和值数组
 				unset($keys);
