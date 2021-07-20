@@ -96,8 +96,9 @@ if($type==0){
 		$configs = Helper::options()->plugin('AutoBackup');
 		
 		$tables = $configs->tables;
-		$tables = explode(",", $tables);
-
+        if (!is_array($tables)){echo "你没有选择任何表"; exit;}
+        
+        
 		$db = Typecho_Db::get();
 		$prefix = $db->getPrefix();
 		$sql = "-- Typecho AutoBackup\r\n-- version 1.2.0\r\n-- 生成日期: ".date("Y年m月d日 H:i:s")."\r\n-- 使用说明：创建一个数据库，然后导入文件\r\n\r\n";
